@@ -8,6 +8,7 @@ QueryString = require 'querystring'
 
 port            = parseInt process.env.PORT        || 8081, 10
 version         = require(Path.resolve(__dirname, "package.json")).version
+csp_report_only = process.env.CAMO_CSP_REPORT_URL
 shared_key      = process.env.CAMO_KEY             || '0x24FEEDFACEDEADBEEFCAFE'
 max_redirects   = process.env.CAMO_MAX_REDIRECTS   || 4
 camo_hostname   = process.env.CAMO_HOSTNAME        || "unknown"
@@ -42,6 +43,9 @@ default_security_headers =
   "X-Content-Type-Options": "nosniff"
   "Content-Security-Policy": "default-src 'none'; img-src data:; style-src 'unsafe-inline'"
   "Strict-Transport-Security" : "max-age=31536000; includeSubDomains"
+
+if csp_report_only
+  default_security_headers["Content-Security-Policy-Report-Only"] = csp_report_only
 
 four_oh_four = (resp, msg, url) ->
   error_log "#{msg}: #{url?.format() or 'unknown'}"
